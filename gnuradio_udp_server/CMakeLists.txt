@@ -25,9 +25,8 @@ install(
 )
 
 install(
-    DIRECTORY "include"
-    DESTINATION "${include_install_dir}"
-    FILES_MATCHING PATTERN "*.h"
+    FILES "include/server.h"
+    DESTINATION "include"
 )
 
 install(TARGETS gnuradio_udp_server
