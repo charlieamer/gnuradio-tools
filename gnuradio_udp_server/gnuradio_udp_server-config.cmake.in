@@ -1,0 +1,2 @@
+set(gnuradio_udp_server_INCLUDE_DIR "@PROJECT_PATH@/include")
+set(gnuradio_udp_server_LIBRARIES "@BUILD_PATH@/libgnuradio_udp_server.a")
