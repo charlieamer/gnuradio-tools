@@ -7,7 +7,29 @@ add_library(gnuradio_udp_server STATIC src/server.cpp)
 
 add_subdirectory(include)
 add_subdirectory(src)
+
+set(config_install_dir "lib/cmake/${PROJECT_NAME}")
+set(include_install_dir "include")
+
 get_filename_component(PROJECT_PATH "${CMAKE_CURRENT_LIST_FILE}" PATH)
 set(BUILD_PATH ${CMAKE_CURRENT_BINARY_DIR})
 configure_file(gnuradio_udp_server-config.cmake.in gnuradio_udp_server-config.cmake)
-install(TARGETS gnuradio_udp_server ARCHIVE DESTINATION lib)
+
+target_include_directories(
+    gnuradio_udp_server PUBLIC
+    include)
+
+install(
+    FILES "${BUILD_PATH}/gnuradio_udp_server-config.cmake"
+    DESTINATION "${config_install_dir}"
+)
+
+install(
+    DIRECTORY "include"
+    DESTINATION "${include_install_dir}"
+    FILES_MATCHING PATTERN "*.h"
+)
+
+install(TARGETS gnuradio_udp_server
+ARCHIVE DESTINATION lib
+INCLUDES DESTINATION include)
