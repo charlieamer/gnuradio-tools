@@ -24,8 +24,8 @@ protected:
       if (val == _last_value) {
 	_count++;
       } else {
-	if (_count < _samp_rate / 600) {
-	  int print_count = round((float)_count / ((float)_samp_rate / (float)_bit_rate));
+  int print_count = round((float)_count / ((float)_samp_rate / (float)_bit_rate));
+	if (print_count < 16) {
 	  for (int i=0;i<print_count;i++) {
 	    cout << _last_value;
 	    cout.flush();

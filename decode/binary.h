@@ -2,15 +2,22 @@
 #define _BINARY_H
 
 #include "decoder.h"
+#include <queue>
+using namespace std;
+
+typedef unsigned char uchar;
 
 class Binary : public Decoder {
-  char _current_value;
+  uchar _current_value;
   int _current_count;
+  int _bits_per_byte;
+  queue<uchar> _queue;
+  string _format;
 public:
-  Binary(boost::program_options::variables_map map) : Decoder(map), _current_count(0), _current_value(0) {}
+  Binary(boost::program_options::variables_map map);
   void onNewLine() override;
   void onNewChar(char value) override;
-  void write(char c);
+  void write(uchar c);
 };
 
 #endif

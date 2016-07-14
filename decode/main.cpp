@@ -13,24 +13,37 @@ int main(int argc, char **argv) {
   description.add_options()
   ("help", "See help.")
   ("mode", boost::program_options::value<string>(), "Set decoding mode.")
+  ("input", boost::program_options::value<string>(), "Set input type.")
   ("std", boost::program_options::value<string>(), "Set standard. (manchester decoding)")
+  ("bpb", boost::program_options::value<int>(), "Set bits per byte (binary decoding)")
+  ("format", boost::program_options::value<string>(), "Set output format (binary decoding)")
   ("output", boost::program_options::value<string>(), "Set output file.");
   
   boost::program_options::variables_map map;
   boost::program_options::store(boost::program_options::parse_command_line(argc, argv, description), map);
   
   if (map.count("help")) {
-    cout << "Usage: decode --mode [manchester | binary]\n";
+    cout << "Usage: decode --mode [manchester | binary | hex] --input [binary | text]\n";
     cout << "  Mode specific options:\n";
     cout << "    manchester:\n";
     cout << "      --std [ieee802 | thomas]\n";
-    cout << "        (default is ieee802)\n";
+    cout << "        (which manchester standard to use, default is ieee802)\n";
+    cout << "    binary:\n";
+    cout << "      --bpb number\n";
+    cout << "        (bits per byte, default is 8)\n";
+    cout << "      --format binary|hex\n";
+    cout << "        (output format, default is binary)\n";
     return 0;
   }
   
   string mode = "binary";
   if (map.count("mode")) {
     mode = map["mode"].as<string>();
+  }
+
+  string input = "text";
+  if (map.count("input")) {
+    input = map["input"].as<string>();
   }
   
   Decoder *decoder = NULL;
@@ -49,10 +62,16 @@ int main(int argc, char **argv) {
     cin.read(&tmp, 1);
     if (!cin.good())
       return 0;
-    if (tmp == '\n')
-      decoder->onNewLine();
-    else
-      decoder->onNewChar(tmp);
+    if (input == "text") {
+      if (tmp == '\n')
+        decoder->onNewLine();
+      else
+        decoder->onNewChar(tmp);
+    } else if (input == "binary") {
+      for (int i=0; i<8; i++) {
+        decoder->onNewChar((tmp & (1 << i)) ? '1' : '0');
+      }
+    }
   }
     
   return 0;
