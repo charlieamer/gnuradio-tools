@@ -7,6 +7,7 @@ using namespace std;
 #include "decoder.h"
 #include "manchester.h"
 #include "binary.h"
+#include "header.h"
 
 int main(int argc, char **argv) {
   boost::program_options::options_description description("Allowed options");
@@ -17,13 +18,14 @@ int main(int argc, char **argv) {
   ("std", boost::program_options::value<string>(), "Set standard. (manchester decoding)")
   ("bpb", boost::program_options::value<int>(), "Set bits per byte (binary decoding)")
   ("format", boost::program_options::value<string>(), "Set output format (binary decoding)")
+  ("value", boost::program_options::value<string>(), "Set header value (header decoding)")
   ("output", boost::program_options::value<string>(), "Set output file.");
   
   boost::program_options::variables_map map;
   boost::program_options::store(boost::program_options::parse_command_line(argc, argv, description), map);
   
   if (map.count("help")) {
-    cout << "Usage: decode --mode [manchester | binary | hex] --input [binary | text]\n";
+    cout << "Usage: decode --mode [manchester | binary | header] --input [binary | text]\n";
     cout << "  Mode specific options:\n";
     cout << "    manchester:\n";
     cout << "      --std [ieee802 | thomas]\n";
@@ -33,6 +35,9 @@ int main(int argc, char **argv) {
     cout << "        (bits per byte, default is 8)\n";
     cout << "      --format binary|hex\n";
     cout << "        (output format, default is binary)\n";
+    cout << "    header:\n";
+    cout << "      --value header_value\n";
+    cout << "        (bits denoting header, mendatory)\n";
     return 0;
   }
   
@@ -52,8 +57,10 @@ int main(int argc, char **argv) {
     decoder = new Manchester(map);
   } else if (mode == "binary") {
     decoder = new Binary(map);
+  } else if (mode == "header") {
+    decoder = new Header(map);
   } else {
-    cout << "Invalid mode " << mode << ". See --help for list of available modes.";
+    cerr << "Invalid mode " << mode << ". See --help for list of available modes.";
     return -1;
   }
   

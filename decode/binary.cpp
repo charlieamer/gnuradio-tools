@@ -4,6 +4,8 @@ void Binary::onNewLine() {
   if (_format == "hex") {
     out() << endl;
   }
+  _current_count = 0;
+  _current_value = 0;
 }
 
 void Binary::onNewChar(char value) {
