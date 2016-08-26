@@ -8,6 +8,7 @@ using namespace std;
 #include "manchester.h"
 #include "binary.h"
 #include "header.h"
+#include "bit3.h"
 
 int main(int argc, char **argv) {
   boost::program_options::options_description description("Allowed options");
@@ -18,6 +19,7 @@ int main(int argc, char **argv) {
   ("std", boost::program_options::value<string>(), "Set standard. (manchester decoding)")
   ("bpb", boost::program_options::value<int>(), "Set bits per byte (binary decoding)")
   ("format", boost::program_options::value<string>(), "Set output format (binary decoding)")
+  ("invert", boost::program_options::value<string>(), "Should output be inverted (3bit decoding)")
   ("value", boost::program_options::value<string>(), "Set header value (header decoding)")
   ("output", boost::program_options::value<string>(), "Set output file.");
   
@@ -25,7 +27,7 @@ int main(int argc, char **argv) {
   boost::program_options::store(boost::program_options::parse_command_line(argc, argv, description), map);
   
   if (map.count("help")) {
-    cout << "Usage: decode --mode [manchester | binary | header] --input [binary | text]\n";
+    cout << "Usage: decode --mode [manchester | binary | header | 3bit] --input [binary | text]\n";
     cout << "  Mode specific options:\n";
     cout << "    manchester:\n";
     cout << "      --std [ieee802 | thomas]\n";
@@ -38,6 +40,9 @@ int main(int argc, char **argv) {
     cout << "    header:\n";
     cout << "      --value header_value\n";
     cout << "        (bits denoting header, mendatory)\n";
+    cout << "    3bit:\n";
+    cout << "      --invert value\n";
+    cout << "        (should or not output value be inverted)";
     return 0;
   }
   
@@ -59,6 +64,8 @@ int main(int argc, char **argv) {
     decoder = new Binary(map);
   } else if (mode == "header") {
     decoder = new Header(map);
+  } else if (mode == "3bit") {
+    decoder = new Bit3(map);
   } else {
     cerr << "Invalid mode " << mode << ". See --help for list of available modes.";
     return -1;

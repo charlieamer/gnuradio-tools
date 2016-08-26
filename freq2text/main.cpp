@@ -89,7 +89,7 @@ class FrequencyServer : public Server<float> {
     float frequency, deviation;
     vector<float> crossings;
     float volume = calculate_frequency(_averages, frequency, deviation, crossings);
-    if (deviation < 5.0f && frequency > 200 && crossings.size() > 50) {
+    if (deviation < 7.0f && frequency > 200 && crossings.size() > 50) {
       _print_mutex.lock();
       //cout << "\r";
       int closest = 0;
@@ -104,8 +104,11 @@ class FrequencyServer : public Server<float> {
       }
       if (abs(closest - frequency) < 300) {
 	_written++;
-	if (alphabet[closest] == 'E')
+	if (alphabet[closest] == 'E') {
 	  cout << _last_char;
+    if (_written % 5 < 3)
+        _written = 2;
+  }
 	else {
 	  cout << alphabet[closest];
 	  _last_char = alphabet[closest];
@@ -129,7 +132,7 @@ public:
   }
   FrequencyServer(boost::asio::io_service &service, int sample_rate, int duration) :
       Server<float>(service, 1234),
-      _biquad(bq_type_notch, 120.0 / (float)sample_rate, 2, 0) {
+      _biquad(bq_type_notch, 120.0 / (float)sample_rate, 1, 0) {
     _buf_size = duration * sample_rate / 1000 + 1;
     _values = new float[_buf_size];
     _averages = new float[_buf_size];
@@ -163,5 +166,5 @@ int main(int argc, char* argv[])
   int samp_rate = 48000;
   if (argc >= 2)
     samp_rate = atoi(argv[1]);
-  FrequencyServer server(service, samp_rate, 67);
+  FrequencyServer server(service, samp_rate, 69);
 }

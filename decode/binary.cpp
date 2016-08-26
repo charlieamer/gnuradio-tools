@@ -10,14 +10,14 @@ void Binary::onNewLine() {
 
 void Binary::onNewChar(char value) {
   _current_value = _current_value |
-    ( (value == '1') << (_current_count++ % 8) );
+    ( (value == '1') << (7 - (_current_count++ % 8)) );
   if (_current_count == _bits_per_byte) {
     while (!_queue.empty()) {
       uchar tmp = _queue.front();
       _queue.pop();
       write(tmp);
     }
-    write(_current_value);
+    write(_current_value >> (_bits_per_byte % 8));
     _current_count = 0;
     _current_value = 0;
   }

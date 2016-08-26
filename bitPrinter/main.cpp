@@ -25,7 +25,7 @@ protected:
 	_count++;
       } else {
   int print_count = round((float)_count / ((float)_samp_rate / (float)_bit_rate));
-	if (print_count < 16) {
+	if (print_count < 9) {
 	  for (int i=0;i<print_count;i++) {
 	    cout << _last_value;
 	    cout.flush();
